@@ -34,8 +34,26 @@ class ChefTest < ActiveSupport::TestCase
     valid_emails = %w[user@email.com zara@gmail.com M.first@yahoo.ca john+smith@co.uk.org]
     valid_emails.each  do |valids|
       @chef.email = valids
-      assert @chef.valid?, '#{valids.inspect} should be valid'
+      assert @chef.valid?, "#{valids.inspect} should be valid"
     end
+  end
+
+  test 'should reject invalid address' do
+    invalid_email = %w[zara@exm zara@eamil,com zara@gmail. zara@foo+co.com]
+    invalid_email.each do |invalids|
+      @chef.email = invalids
+      assert_not @chef.valid?, "#{invalids.inspect} should be invalid "
+    end
+  end
+
+  test 'email should be unique and case insensitive'  do
+    duplicate_chef = @chef.dup
+    duplicate_chef.email = @chef.email.upcase
+    @chef.save
+    assert_not duplicate_chef.valid?
+  end
+
+  test "email should be case insenseive" do
   end
 
 end
